@@ -1,0 +1,8 @@
+{
+  "name": "ICON CODE Pro Store",
+  "description": "Premium 3D Online Store with advanced Control Panel, Hidden Lighting, and Multi-channel WhatsApp ordering.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
