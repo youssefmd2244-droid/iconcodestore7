@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StoreData, Product, StoreSettings } from './types';
-import { INITIAL_DATA, ADMIN_PASSWORD } from './constants';
+import { INITIAL_DATA } from './constants';
 import StoreFront from './components/StoreFront';
 import ControlPanel from './components/ControlPanel';
 
@@ -12,22 +12,27 @@ const App: React.FC = () => {
 
   const [view, setView] = useState<'store' | 'admin'>('store');
 
-  // --- إعدادات GitHub API (مدمجة بدقة) ---
+  // --- إعدادات GitHub API (محدثة بناءً على طلبك) ---
   const GITHUB_TOKEN = "Ghp_t9Ka22wGPxbYFIueoJlxJLqVMCAPtJ2kVMKI";
   const REPO_OWNER = "youssefmd2244-droid";
-  const REPO_NAME = "iconcodestore7"; // تم التعديل ليتطابق مع الصورة الحقيقية
+  const REPO_NAME = "7iconcodestore"; // الاسم الجديد الذي اعتمدته
   const FILE_PATH = "constants.tsx";
 
-  // وظيفة المزامنة التلقائية (API)
+  // وظيفة المزامنة التلقائية مع GitHub - تم دمجها للحفاظ على البيانات
   const syncToGitHub = async (updatedData: StoreData) => {
     try {
+      // 1. جلب بيانات الملف الحالية (للحصول على sha)
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
       });
+      
+      if (!res.ok) throw new Error("التوكن غير صالح أو المستودع غير موجود");
       const fileInfo = await res.json();
 
+      // 2. تجهيز محتوى constants.tsx الجديد بالكامل
       const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
+      // 3. إرسال التحديث
       const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         method: 'PUT',
         headers: {
@@ -43,13 +48,15 @@ const App: React.FC = () => {
 
       if (updateRes.ok) {
         console.log("GitHub Synced ✅");
+      } else {
+        console.error("GitHub Update Failed ❌");
       }
     } catch (err) {
-      console.error("GitHub Sync Failed ❌", err);
+      console.error("GitHub Sync Error:", err);
     }
   };
 
-  // Live Sync Channel (محفوظ من ملفك الأصلي)
+  // Live Sync Channel (للمزامنة بين التبويبات المفتوحة)
   useEffect(() => {
     const channel = new BroadcastChannel('store_updates');
     channel.onmessage = (event) => {
@@ -58,27 +65,30 @@ const App: React.FC = () => {
     return () => channel.close();
   }, []);
 
+  // Visual Theme Sync & Local Storage
   useEffect(() => {
     localStorage.setItem('icon_code_pro_v3', JSON.stringify(data));
     const channel = new BroadcastChannel('store_updates');
     channel.postMessage(data);
     channel.close();
 
-    // Visual Theme Sync (محفوظ من ملفك الأصلي)
     const root = document.documentElement;
     root.style.setProperty('--primary-color', data.settings.primaryColor);
     root.style.setProperty('--secondary-color', data.settings.secondaryColor);
     root.style.setProperty('--accent-color', data.settings.accentColor);
     root.style.setProperty('--bg-color', data.settings.bgColor);
-    root.style.setProperty('--lighting-intensity', data.settings.lightingIntensity.toString());
+    if (data.settings.lightingIntensity) {
+        root.style.setProperty('--lighting-intensity', data.settings.lightingIntensity.toString());
+    }
   }, [data]);
 
-  // دالة الحفظ المركزية (لتشغيل الـ API مع كل حركة)
+  // دالة الحفظ المركزية (المسؤولة عن تشغيل الـ API)
   const handleDataChange = (newData: StoreData) => {
     setData(newData);
-    syncToGitHub(newData); 
+    syncToGitHub(newData); // المزامنة مع جيت هاب عند كل تغيير
   };
 
+  // الوظائف الفرعية (بدون أي تقليص)
   const updateSettings = (settings: StoreSettings) => {
     handleDataChange({ ...data, settings });
   };
