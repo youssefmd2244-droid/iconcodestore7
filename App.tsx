@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const [view, setView] = useState<'store' | 'admin'>('store');
 
   // --- إعدادات GitHub API ---
-  const GITHUB_TOKEN = "Ghp_t9Ka22wGPxbYFIueoJlxJLqVMCAPtJ2kVMKI";
+  const GITHUB_TOKEN = "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";
   const REPO_OWNER = "youssefmd2244-droid";
   const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
