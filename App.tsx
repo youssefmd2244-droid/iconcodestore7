@@ -12,27 +12,24 @@ const App: React.FC = () => {
 
   const [view, setView] = useState<'store' | 'admin'>('store');
 
-  // --- إعدادات GitHub API (محدثة بناءً على طلبك) ---
+  // --- إعدادات GitHub API ---
   const GITHUB_TOKEN = "Ghp_t9Ka22wGPxbYFIueoJlxJLqVMCAPtJ2kVMKI";
   const REPO_OWNER = "youssefmd2244-droid";
-  const REPO_NAME = "7iconcodestore"; // الاسم الجديد الذي اعتمدته
+  const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
 
-  // وظيفة المزامنة التلقائية مع GitHub - تم دمجها للحفاظ على البيانات
   const syncToGitHub = async (updatedData: StoreData) => {
     try {
-      // 1. جلب بيانات الملف الحالية (للحصول على sha)
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
       });
       
-      if (!res.ok) throw new Error("التوكن غير صالح أو المستودع غير موجود");
+      if (!res.ok) throw new Error("فشل الوصول للمستودع - تأكد من التوكن");
       const fileInfo = await res.json();
 
-      // 2. تجهيز محتوى constants.tsx الجديد بالكامل
-      const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
+      // تم تعديل الباسورد ليكون 2007 كما طلبت
+      const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "2007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
-      // 3. إرسال التحديث
       const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         method: 'PUT',
         headers: {
@@ -48,15 +45,12 @@ const App: React.FC = () => {
 
       if (updateRes.ok) {
         console.log("GitHub Synced ✅");
-      } else {
-        console.error("GitHub Update Failed ❌");
       }
     } catch (err) {
       console.error("GitHub Sync Error:", err);
     }
   };
 
-  // Live Sync Channel (للمزامنة بين التبويبات المفتوحة)
   useEffect(() => {
     const channel = new BroadcastChannel('store_updates');
     channel.onmessage = (event) => {
@@ -65,7 +59,6 @@ const App: React.FC = () => {
     return () => channel.close();
   }, []);
 
-  // Visual Theme Sync & Local Storage
   useEffect(() => {
     localStorage.setItem('icon_code_pro_v3', JSON.stringify(data));
     const channel = new BroadcastChannel('store_updates');
@@ -82,38 +75,9 @@ const App: React.FC = () => {
     }
   }, [data]);
 
-  // دالة الحفظ المركزية (المسؤولة عن تشغيل الـ API)
   const handleDataChange = (newData: StoreData) => {
     setData(newData);
-    syncToGitHub(newData); // المزامنة مع جيت هاب عند كل تغيير
-  };
-
-  // الوظائف الفرعية (بدون أي تقليص)
-  const updateSettings = (settings: StoreSettings) => {
-    handleDataChange({ ...data, settings });
-  };
-
-  const addCategory = (name: string, icon: string) => {
-    handleDataChange({ ...data, categories: [...data.categories, { name, icon }] });
-  };
-
-  const removeCategory = (name: string) => {
-    handleDataChange({ ...data, categories: data.categories.filter(c => c.name !== name) });
-  };
-
-  const addProduct = (product: Product) => {
-    handleDataChange({ ...data, products: [...data.products, product] });
-  };
-
-  const deleteProduct = (id: string) => {
-    handleDataChange({ ...data, products: data.products.filter(p => p.id !== id) });
-  };
-
-  const updateProduct = (updated: Product) => {
-    handleDataChange({
-      ...data,
-      products: data.products.map(p => p.id === updated.id ? updated : p)
-    });
+    syncToGitHub(newData);
   };
 
   return (
@@ -124,12 +88,12 @@ const App: React.FC = () => {
         <ControlPanel 
           data={data} 
           goBack={() => setView('store')}
-          onUpdateSettings={updateSettings}
-          onAddCategory={addCategory}
-          onRemoveCategory={removeCategory}
-          onAddProduct={addProduct}
-          onDeleteProduct={deleteProduct}
-          onUpdateProduct={updateProduct}
+          onUpdateSettings={(s) => handleDataChange({...data, settings: s})}
+          onAddCategory={(n, i) => handleDataChange({...data, categories: [...data.categories, {name: n, icon: i}]})}
+          onRemoveCategory={(n) => handleDataChange({...data, categories: data.categories.filter(c => c.name !== n)})}
+          onAddProduct={(p) => handleDataChange({...data, products: [...data.products, p]})}
+          onDeleteProduct={(id) => handleDataChange({...data, products: data.products.filter(p => p.id !== id)})}
+          onUpdateProduct={(upd) => handleDataChange({...data, products: data.products.map(p => p.id === upd.id ? upd : p)})}
         />
       )}
     </div>
