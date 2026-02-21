@@ -24,11 +24,11 @@ const App: React.FC = () => {
         headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
       });
       
-      if (!res.ok) throw new Error("فشل الوصول للمستودع - تأكد من التوكن");
+      if (!res.ok) throw new Error("فشل الوصول للمستودع");
       const fileInfo = await res.json();
 
-      // تم تعديل الباسورد ليكون 2007 كما طلبت
-      const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "2007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
+      // تم تعديل الباسورد هنا ليكون 20042007 بناءً على طلبك
+      const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
       const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         method: 'PUT',
@@ -70,9 +70,6 @@ const App: React.FC = () => {
     root.style.setProperty('--secondary-color', data.settings.secondaryColor);
     root.style.setProperty('--accent-color', data.settings.accentColor);
     root.style.setProperty('--bg-color', data.settings.bgColor);
-    if (data.settings.lightingIntensity) {
-        root.style.setProperty('--lighting-intensity', data.settings.lightingIntensity.toString());
-    }
   }, [data]);
 
   const handleDataChange = (newData: StoreData) => {
