@@ -12,13 +12,13 @@ const App: React.FC = () => {
 
   const [view, setView] = useState<'store' | 'admin'>('store');
 
-  // --- إعدادات GitHub API (تم وضع مفتاحك هنا) ---
+  // --- إعدادات GitHub API (مدمجة بدقة) ---
   const GITHUB_TOKEN = "Ghp_t9Ka22wGPxbYFIueoJlxJLqVMCAPtJ2kVMKI";
   const REPO_OWNER = "youssefmd2244-droid";
-  const REPO_NAME = "7icon.code.store";
+  const REPO_NAME = "iconcodestore7"; // تم التعديل ليتطابق مع الصورة الحقيقية
   const FILE_PATH = "constants.tsx";
 
-  // وظيفة المزامنة التلقائية مع GitHub
+  // وظيفة المزامنة التلقائية (API)
   const syncToGitHub = async (updatedData: StoreData) => {
     try {
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
@@ -28,7 +28,7 @@ const App: React.FC = () => {
 
       const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
-      await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+      const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         method: 'PUT',
         headers: {
           'Authorization': `token ${GITHUB_TOKEN}`,
@@ -40,13 +40,16 @@ const App: React.FC = () => {
           sha: fileInfo.sha,
         }),
       });
-      console.log("GitHub Synced ✅");
+
+      if (updateRes.ok) {
+        console.log("GitHub Synced ✅");
+      }
     } catch (err) {
       console.error("GitHub Sync Failed ❌", err);
     }
   };
 
-  // Live Sync Channel
+  // Live Sync Channel (محفوظ من ملفك الأصلي)
   useEffect(() => {
     const channel = new BroadcastChannel('store_updates');
     channel.onmessage = (event) => {
@@ -61,7 +64,7 @@ const App: React.FC = () => {
     channel.postMessage(data);
     channel.close();
 
-    // Visual Theme Sync
+    // Visual Theme Sync (محفوظ من ملفك الأصلي)
     const root = document.documentElement;
     root.style.setProperty('--primary-color', data.settings.primaryColor);
     root.style.setProperty('--secondary-color', data.settings.secondaryColor);
@@ -70,10 +73,10 @@ const App: React.FC = () => {
     root.style.setProperty('--lighting-intensity', data.settings.lightingIntensity.toString());
   }, [data]);
 
-  // دالة الحفظ المركزية التي تشغل الـ API
+  // دالة الحفظ المركزية (لتشغيل الـ API مع كل حركة)
   const handleDataChange = (newData: StoreData) => {
     setData(newData);
-    syncToGitHub(newData); // تحديث جيت هاب فوراً
+    syncToGitHub(newData); 
   };
 
   const updateSettings = (settings: StoreSettings) => {
