@@ -13,7 +13,8 @@ const App: React.FC = () => {
   const [view, setView] = useState<'store' | 'admin'>('store');
 
   // --- إعدادات GitHub API ---
-  const GITHUB_TOKEN = "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";
+  // ملاحظة: إذا ظهر لك تنبيه "Bad credentials" فالتوكن قد تم إيقافه من قبل GitHub ويجب استبداله
+  const GITHUB_TOKEN = "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"; 
   const REPO_OWNER = "youssefmd2244-droid";
   const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
@@ -24,10 +25,15 @@ const App: React.FC = () => {
         headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
       });
       
-      if (!res.ok) throw new Error("فشل الوصول للمستودع");
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert("❌ فشل الوصول للملف: " + (errorData.message || "تأكد من التوكن"));
+        return;
+      }
+      
       const fileInfo = await res.json();
 
-      // تم تعديل الباسورد هنا ليكون 20042007 بناءً على طلبك
+      // تم الحفاظ على الباسورد 20042007
       const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
       const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
@@ -44,10 +50,13 @@ const App: React.FC = () => {
       });
 
       if (updateRes.ok) {
-        console.log("GitHub Synced ✅");
+        alert("✅ تم الحفظ في GitHub بنجاح! التعديلات ستظهر للجميع خلال دقيقتين.");
+      } else {
+        const errorUpdate = await updateRes.json();
+        alert("⚠️ فشل التحديث أونلاين: " + errorUpdate.message);
       }
     } catch (err) {
-      console.error("GitHub Sync Error:", err);
+      alert("🛑 خطأ غير متوقع: " + err);
     }
   };
 
