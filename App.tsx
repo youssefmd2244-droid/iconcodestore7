@@ -13,27 +13,33 @@ const App: React.FC = () => {
   const [view, setView] = useState<'store' | 'admin'>('store');
 
   // --- إعدادات GitHub API ---
-  // ملاحظة: إذا ظهر لك تنبيه "Bad credentials" فالتوكن قد تم إيقافه من قبل GitHub ويجب استبداله
-  const GITHUB_TOKEN = "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"; 
+  // تم تعديل السطر ده عشان يقرأ التوكن من Vercel بشكل آمن
+  const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN; 
   const REPO_OWNER = "youssefmd2244-droid";
   const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
 
   const syncToGitHub = async (updatedData: StoreData) => {
     try {
+      // التأكد من وجود التوكن قبل المحاولة
+      if (!GITHUB_TOKEN) {
+        alert("🛑 خطأ: التوكن غير موجود في إعدادات Vercel!");
+        return;
+      }
+
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
       });
       
       if (!res.ok) {
         const errorData = await res.json();
-        alert("❌ فشل الوصول للملف: " + (errorData.message || "تأكد من التوكن"));
+        alert("❌ فشل الوصول للملف: " + (errorData.message || "Bad credentials"));
         return;
       }
       
       const fileInfo = await res.json();
 
-      // تم الحفاظ على الباسورد 20042007
+      // الباسورد المطلوب 20042007
       const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
       const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
@@ -50,10 +56,10 @@ const App: React.FC = () => {
       });
 
       if (updateRes.ok) {
-        alert("✅ تم الحفظ في GitHub بنجاح! التعديلات ستظهر للجميع خلال دقيقتين.");
+        alert("✅ تم الحفظ في GitHub بنجاح! التعديلات ستظهر للجميع خلال دقيقة.");
       } else {
         const errorUpdate = await updateRes.json();
-        alert("⚠️ فشل التحديث أونلاين: " + errorUpdate.message);
+        alert("⚠️ فشل التحديث: " + errorUpdate.message);
       }
     } catch (err) {
       alert("🛑 خطأ غير متوقع: " + err);
