@@ -14,7 +14,7 @@ const App: React.FC = () => {
 
   // --- إعدادات GitHub API ---
   // ملاحظة: إذا ظهر لك تنبيه "Bad credentials" فالتوكن قد تم إيقافه من قبل GitHub ويجب استبداله
-  const GITHUB_TOKEN = "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"; 
+  const GITHUB_TOKEN = "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"; 
   const REPO_OWNER = "youssefmd2244-droid";
   const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
