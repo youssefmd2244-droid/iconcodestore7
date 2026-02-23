@@ -18,7 +18,8 @@ export const INITIAL_DATA: StoreData = {
       "title": "Hhhs",
       "price": 200,
       "description": "Eddj",
-      "id": "1771827388570"
+      "id": "1771827388570",
+      "mediaUrl": "https://img.sanishtech.com/u/c2954018cbbbefea03dfa01f75d64aac.jpg"
     }
   ],
   "settings": {
