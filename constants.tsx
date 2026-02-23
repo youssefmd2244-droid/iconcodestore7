@@ -5,27 +5,8 @@ export const WHATSAPP_NUM_1 = "201094555299";
 export const WHATSAPP_NUM_2 = "201102293350";
 
 export const INITIAL_DATA: StoreData = {
-  "categories": [
-    {
-      "name": "تسويق",
-      "icon": "📢"
-    },
-    {
-      "name": "Joker",
-      "icon": "🏷️"
-    }
-  ],
-  "products": [
-    {
-      "id": "1",
-      "title": "تصميم موقع احترافي",
-      "description": "نقوم بإنشاء وتطوير المواقع والمتاجر الإلكترونية بأحدث التقنيات العالمية.",
-      "price": 5000,
-      "mediaUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=800",
-      "mediaType": "image",
-      "category": "برمجيات"
-    }
-  ],
+  "categories": [],
+  "products": [],
   "settings": {
     "name": "ICON CODE STORE",
     "logoUrl": "https://cdn-icons-png.flaticon.com/512/1170/1170678.png",
@@ -35,7 +16,7 @@ export const INITIAL_DATA: StoreData = {
     "bgColor": "#0a0a1a",
     "language": "ar",
     "currency": "EGP",
-    "lightingIntensity": 0.4,
+    "lightingIntensity": 0.1,
     "layout": "default",
     "orderLinks": [
       {
