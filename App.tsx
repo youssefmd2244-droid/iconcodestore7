@@ -62,7 +62,8 @@ const App: React.FC = () => {
       });
 
       if (updateRes.ok) {
-        alert("✅ تم الإصلاح والحفظ بنجاح! التعديلات ستظهر خلال دقيقة.");
+        // الرسالة الجديدة التي طلبتها
+        alert("✅ تم تعديل ملف الإعدادات بنجاح!\n\nنعتذر منك، التعديلات قد لا تظهر أونلاين فوراً للجميع بسبب نظام التخزين المؤقت (Cache). \nيرجى الانتظار دقيقة ثم تحديث الصفحة.");
       } else {
         const errorUpdate = await updateRes.json();
         throw new Error(`⚠️ فشل التحديث أونلاين: ${errorUpdate.message}`);
@@ -120,4 +121,4 @@ const App: React.FC = () => {
 };
 
 export default App;
-                                                     
+            
