@@ -12,36 +12,42 @@ const App: React.FC = () => {
 
   const [view, setView] = useState<'store' | 'admin'>('store');
 
-  // --- إعدادات GitHub API ---
-  // تم تعديل السطر ده عشان يقرأ التوكن من Vercel بشكل آمن
-  const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN; 
+  // --- إعدادات GitHub API مع نظام التشخيص الذاتي ---
   const REPO_OWNER = "youssefmd2244-droid";
   const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
 
   const syncToGitHub = async (updatedData: StoreData) => {
+    // تشخيص حالة التوكن من Vercel
+    const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+
     try {
-      // التأكد من وجود التوكن قبل المحاولة
+      // 1. فحص وجود التوكن في النظام
       if (!GITHUB_TOKEN) {
-        alert("🛑 خطأ: التوكن غير موجود في إعدادات Vercel!");
-        return;
+        throw new Error("العيب: التوكن غير مقروء.\nالحل: تأكد من إضافة 'VITE_GITHUB_TOKEN' في إعدادات Vercel بشكل سليم.");
       }
 
+      // 2. فحص صلاحية التوكن والاتصال بـ GitHub
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
       });
       
       if (!res.ok) {
         const errorData = await res.json();
-        alert("❌ فشل الوصول للملف: " + (errorData.message || "Bad credentials"));
-        return;
+        if (res.status === 401) {
+          throw new Error("العيب: التوكن 'محروق' (Bad credentials).\nالحل: اصنع توكن جديد بصلاحية repo وضعه في Vercel ولا تنشره في الشات.");
+        } else if (res.status === 404) {
+          throw new Error("العيب: ملف الإعدادات غير موجود أو المستودع خاص.\nالحل: تأكد من اسم المستودع ومسار الملف.");
+        }
+        throw new Error(`عيب تقني: ${errorData.message}`);
       }
       
       const fileInfo = await res.json();
 
-      // الباسورد المطلوب 20042007
+      // المحتوى الجديد مع الاحتفاظ بكلمة السر 20042007
       const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
+      // 3. محاولة الحفظ النهائي
       const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         method: 'PUT',
         headers: {
@@ -49,20 +55,21 @@ const App: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: "تحديث تلقائي من لوحة التحكم",
+          message: "تحديث من نظام كشف الأخطاء الذكي",
           content: btoa(unescape(encodeURIComponent(newContent))),
           sha: fileInfo.sha,
         }),
       });
 
       if (updateRes.ok) {
-        alert("✅ تم الحفظ في GitHub بنجاح! التعديلات ستظهر للجميع خلال دقيقة.");
+        alert("✅ تم الإصلاح والحفظ بنجاح! التعديلات ستظهر خلال دقيقة.");
       } else {
         const errorUpdate = await updateRes.json();
-        alert("⚠️ فشل التحديث: " + errorUpdate.message);
+        throw new Error(`⚠️ فشل التحديث أونلاين: ${errorUpdate.message}`);
       }
-    } catch (err) {
-      alert("🛑 خطأ غير متوقع: " + err);
+    } catch (err: any) {
+      // إظهار التقرير في حال الفشل
+      alert(`🛑 تقرير نظام الأعطال:\n\n${err.message}`);
     }
   };
 
@@ -113,3 +120,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+                                                     
