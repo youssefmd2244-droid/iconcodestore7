@@ -17,19 +17,22 @@ const App: React.FC = () => {
   const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
   
-  // رابط جلب البيانات الخام لضمان التحديث اللحظي للجميع
-  const RAW_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FILE_PATH}`;
-
-  // --- وظيفة جلب البيانات من GitHub فور فتح الموقع (لحل مشكلة الكاش عند الناس) ---
+  // --- نظام الجلب اللحظي العابر للكاش (تعديل لضمان السرعة القصوى) ---
   useEffect(() => {
-    const fetchLatestData = async () => {
+    const fetchInstantData = async () => {
       try {
-        // إضافة Timestamp لكسر كاش المتصفح عند الزوار
-        const response = await fetch(`${RAW_URL}?v=${Date.now()}`);
+        // نستخدم الـ API مباشرة مع توقيت متغير لكسر كاش Vercel والمتصفح تماماً
+        const response = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?t=${Date.now()}`
+        );
+        
         if (response.ok) {
-          const text = await response.text();
-          // استخراج الجزء الخاص ببيانات INITIAL_DATA من ملف الـ TSX
-          const jsonMatch = text.match(/export const INITIAL_DATA: StoreData = ([\s\S]*?);/);
+          const fileData = await response.json();
+          // فك تشفير المحتوى القادم من GitHub (Base64) لضمان قراءة أحدث نسخة مخزنة في الخادم
+          const decodedContent = decodeURIComponent(escape(atob(fileData.content)));
+          
+          // استخراج البيانات من النص برمجياً لتحديث الواجهة فوراً
+          const jsonMatch = decodedContent.match(/export const INITIAL_DATA: StoreData = ([\s\S]*?);/);
           if (jsonMatch && jsonMatch[1]) {
             const latestData = JSON.parse(jsonMatch[1]);
             setData(latestData);
@@ -37,23 +40,25 @@ const App: React.FC = () => {
           }
         }
       } catch (err) {
-        console.log("استخدام البيانات المحلية حالياً");
+        console.log("استخدام النسخة المحلية في حال فشل الجلب اللحظي");
       }
     };
-    fetchLatestData();
+
+    fetchInstantData();
+    
+    // فحص دوري كل 30 ثانية لتحديث المنتجات عند الزوار تلقائياً
+    const interval = setInterval(fetchInstantData, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const syncToGitHub = async (updatedData: StoreData) => {
-    // تشخيص حالة التوكن من Vercel
     const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 
     try {
-      // 1. فحص وجود التوكن في النظام
       if (!GITHUB_TOKEN) {
         throw new Error("العيب: التوكن غير مقروء.\nالحل: تأكد من إضافة 'VITE_GITHUB_TOKEN' في إعدادات Vercel بشكل سليم.");
       }
 
-      // 2. فحص صلاحية التوكن والاتصال بـ GitHub
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
       });
@@ -73,7 +78,6 @@ const App: React.FC = () => {
       // المحتوى الجديد مع الاحتفاظ بكلمة السر 20042007
       const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
-      // 3. محاولة الحفظ النهائي
       const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
         method: 'PUT',
         headers: {
@@ -81,21 +85,20 @@ const App: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: "تحديث من نظام كشف الأخطاء الذكي",
+          message: "تحديث لحظي عابر للكاش",
           content: btoa(unescape(encodeURIComponent(newContent))),
           sha: fileInfo.sha,
         }),
       });
 
       if (updateRes.ok) {
-        // الرسالة التي طلبتها بخصوص تأخير الاونلاين
+        // رسالة النجاح والاعتذار التي طلبتها
         alert("✅ تم تعديل ملف الإعدادات بنجاح!\n\nنعتذر منك، التعديلات قد لا تظهر أونلاين فوراً للجميع بسبب نظام التخزين المؤقت (Cache). \nيرجى الانتظار دقيقة ثم تحديث الصفحة.");
       } else {
         const errorUpdate = await updateRes.json();
         throw new Error(`⚠️ فشل التحديث أونلاين: ${errorUpdate.message}`);
       }
     } catch (err: any) {
-      // إظهار التقرير في حال الفشل
       alert(`🛑 تقرير نظام الأعطال:\n\n${err.message}`);
     }
   };
@@ -147,4 +150,4 @@ const App: React.FC = () => {
 };
 
 export default App;
-            
+        
