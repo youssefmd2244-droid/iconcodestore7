@@ -5,7 +5,12 @@ export const WHATSAPP_NUM_1 = "201094555299";
 export const WHATSAPP_NUM_2 = "201102293350";
 
 export const INITIAL_DATA: StoreData = {
-  "categories": [],
+  "categories": [
+    {
+      "name": "Hh",
+      "icon": "🏷️"
+    }
+  ],
   "products": [],
   "settings": {
     "name": "ICON CODE STORE",
@@ -16,7 +21,7 @@ export const INITIAL_DATA: StoreData = {
     "bgColor": "#0a0a1a",
     "language": "ar",
     "currency": "EGP",
-    "lightingIntensity": 0.3,
+    "lightingIntensity": 0.2,
     "layout": "default",
     "orderLinks": [
       {
