@@ -11,7 +11,16 @@ export const INITIAL_DATA: StoreData = {
       "icon": "🏷️"
     }
   ],
-  "products": [],
+  "products": [
+    {
+      "mediaType": "image",
+      "category": "Hgg",
+      "title": "Hhhs",
+      "price": 200,
+      "description": "Eddj",
+      "id": "1771827388570"
+    }
+  ],
   "settings": {
     "name": "ICON CODE STORE",
     "logoUrl": "https://cdn-icons-png.flaticon.com/512/1170/1170678.png",
