@@ -13,19 +13,20 @@ export default defineConfig(({ mode }) => {
       define: {
         'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
         'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        // السطر المضاف لربط GitHub
+        // ربط التوكن الخاص بـ GitHub من Vercel
         'import.meta.env.VITE_GITHUB_TOKEN': JSON.stringify(env.VITE_GITHUB_TOKEN)
       },
-      // --- إضافة إعدادات إجبار التحديث لكل الملفات ---
       build: {
-        emptyOutDir: true, // يمسح النسخة القديمة تماماً قبل بناء الجديدة
+        emptyOutDir: true, // يمسح المجلد القديم لضمان نظافة الملفات
         sourcemap: false,
+        // تحسين أداء البناء ومنع التخزين المؤقت القديم
+        cssCodeSplit: true,
         rollupOptions: {
           output: {
-            // يضيف رقم متغير لكل ملف لضمان عدم تخزينه في المتصفح
-            entryFileNames: `[name]-[hash].js`,
-            chunkFileNames: `[name]-[hash].js`,
-            assetFileNames: `[name]-[hash].[ext]`
+            // استخدام توقيت عشوائي (Timestamp) لضمان أن كل ملف له اسم فريد تماماً
+            entryFileNames: `assets/[name].[hash].${Date.now()}.js`,
+            chunkFileNames: `assets/[name].[hash].${Date.now()}.js`,
+            assetFileNames: `assets/[name].[hash].${Date.now()}.[ext]`
           }
         }
       },
