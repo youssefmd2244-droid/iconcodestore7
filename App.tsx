@@ -16,6 +16,32 @@ const App: React.FC = () => {
   const REPO_OWNER = "youssefmd2244-droid";
   const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
+  
+  // رابط جلب البيانات الخام لضمان التحديث اللحظي للجميع
+  const RAW_URL = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${FILE_PATH}`;
+
+  // --- وظيفة جلب البيانات من GitHub فور فتح الموقع (لحل مشكلة الكاش عند الناس) ---
+  useEffect(() => {
+    const fetchLatestData = async () => {
+      try {
+        // إضافة Timestamp لكسر كاش المتصفح عند الزوار
+        const response = await fetch(`${RAW_URL}?v=${Date.now()}`);
+        if (response.ok) {
+          const text = await response.text();
+          // استخراج الجزء الخاص ببيانات INITIAL_DATA من ملف الـ TSX
+          const jsonMatch = text.match(/export const INITIAL_DATA: StoreData = ([\s\S]*?);/);
+          if (jsonMatch && jsonMatch[1]) {
+            const latestData = JSON.parse(jsonMatch[1]);
+            setData(latestData);
+            localStorage.setItem('icon_code_pro_v3', JSON.stringify(latestData));
+          }
+        }
+      } catch (err) {
+        console.log("استخدام البيانات المحلية حالياً");
+      }
+    };
+    fetchLatestData();
+  }, []);
 
   const syncToGitHub = async (updatedData: StoreData) => {
     // تشخيص حالة التوكن من Vercel
@@ -62,7 +88,7 @@ const App: React.FC = () => {
       });
 
       if (updateRes.ok) {
-        // الرسالة الجديدة التي طلبتها
+        // الرسالة التي طلبتها بخصوص تأخير الاونلاين
         alert("✅ تم تعديل ملف الإعدادات بنجاح!\n\nنعتذر منك، التعديلات قد لا تظهر أونلاين فوراً للجميع بسبب نظام التخزين المؤقت (Cache). \nيرجى الانتظار دقيقة ثم تحديث الصفحة.");
       } else {
         const errorUpdate = await updateRes.json();
