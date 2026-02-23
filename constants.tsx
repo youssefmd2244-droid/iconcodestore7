@@ -16,7 +16,7 @@ export const INITIAL_DATA: StoreData = {
     "bgColor": "#0a0a1a",
     "language": "ar",
     "currency": "EGP",
-    "lightingIntensity": 0.2,
+    "lightingIntensity": 0.3,
     "layout": "default",
     "orderLinks": [
       {
