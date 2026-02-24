@@ -42,6 +42,15 @@ export const INITIAL_DATA: StoreData = {
       "description": "القطعتين بسعر قطعة 🔥🔥🔥",
       "mediaUrl": "https://img.sanishtech.com/u/8c7b4b29b99b6873289c13beb9f03737.jpg",
       "id": "1771903548368"
+    },
+    {
+      "mediaType": "image",
+      "category": "ادوات منزلية ",
+      "description": "",
+      "title": "دولاب تخزين اطفال ",
+      "price": 1549,
+      "mediaUrl": "https://img.sanishtech.com/u/274ac4dbd0054169e96ad07c82886138.jpg",
+      "id": "1771904971987"
     }
   ],
   "settings": {
