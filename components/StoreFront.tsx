@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { StoreData, Product } from '../types';
 
@@ -12,6 +11,16 @@ const StoreFront: React.FC<Props> = ({ data, goToAdmin }) => {
   const [activeCategory, setActiveCategory] = useState('Home');
   const [lightbox, setLightbox] = useState<Product | null>(null);
   const revealRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // --- دالة المعالج الذكي للصور لضمان الظهور للجميع ---
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, originalUrl: string) => {
+    const target = e.target as HTMLImageElement;
+    // إذا فشل الرابط، نقوم بمحاولة إعادة تحميله مع إضافة كاسر للكاش لضمان جلب أحدث نسخة
+    if (!target.src.includes('retry')) {
+      console.log("⚠️ فشل تحميل الصورة، جاري إعادة المحاولة بنظام Turbo...");
+      target.src = originalUrl + (originalUrl.includes('?') ? '&' : '?') + 'retry=' + Date.now();
+    }
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -39,7 +48,12 @@ const StoreFront: React.FC<Props> = ({ data, goToAdmin }) => {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-6 cursor-pointer" onClick={() => setActiveCategory('Home')}>
             <div className="w-14 h-14 bg-white/5 border border-white/10 p-2 rounded-2xl dazzle-element overflow-hidden">
-               <img src={data.settings.logoUrl} alt="logo" className="w-full h-full object-contain" />
+               <img 
+                 src={data.settings.logoUrl} 
+                 alt="logo" 
+                 className="w-full h-full object-contain"
+                 onError={(e) => handleImageError(e, data.settings.logoUrl)} 
+               />
             </div>
             <h1 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                {data.settings.name}
@@ -101,7 +115,12 @@ const StoreFront: React.FC<Props> = ({ data, goToAdmin }) => {
             >
               <div className="relative aspect-video overflow-hidden cursor-pointer" onClick={() => setLightbox(p)}>
                 {p.mediaType === 'image' ? (
-                  <img src={p.mediaUrl} className="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000" />
+                  <img 
+                    src={p.mediaUrl} 
+                    className="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000" 
+                    onError={(e) => handleImageError(e, p.mediaUrl)}
+                    loading="lazy"
+                  />
                 ) : (
                   <video src={p.mediaUrl} className="w-full h-full object-cover" muted autoPlay loop />
                 )}
@@ -160,7 +179,11 @@ const StoreFront: React.FC<Props> = ({ data, goToAdmin }) => {
           <div className="max-w-5xl w-full flex flex-col items-center gap-10" onClick={e => e.stopPropagation()}>
              <div className="w-full aspect-video rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(99,102,241,0.2)] border border-white/10 group">
                 {lightbox.mediaType === 'image' ? (
-                  <img src={lightbox.mediaUrl} className="w-full h-full object-contain" />
+                  <img 
+                    src={lightbox.mediaUrl} 
+                    className="w-full h-full object-contain" 
+                    onError={(e) => handleImageError(e, lightbox.mediaUrl)}
+                  />
                 ) : (
                   <video src={lightbox.mediaUrl} className="w-full h-full object-contain" controls autoPlay />
                 )}
@@ -221,3 +244,4 @@ const StoreFront: React.FC<Props> = ({ data, goToAdmin }) => {
 };
 
 export default StoreFront;
+            
