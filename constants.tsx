@@ -29,6 +29,15 @@ export const INITIAL_DATA: StoreData = {
       "price": 299,
       "id": "1771902845567",
       "mediaUrl": "https://img.sanishtech.com/u/2c449beb9982342f9e1fe97778e75360.jpg"
+    },
+    {
+      "mediaType": "image",
+      "category": "General",
+      "title": "شماعه",
+      "price": 69,
+      "description": "القطعتين بسعر قطعة 🔥🔥🔥",
+      "mediaUrl": "https://img.sanishtech.com/u/8c7b4b29b99b6873289c13beb9f03737.jpg",
+      "id": "1771903548368"
     }
   ],
   "settings": {
