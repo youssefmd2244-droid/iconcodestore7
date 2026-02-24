@@ -36,7 +36,7 @@ export const INITIAL_DATA: StoreData = {
       "title": "إسدال قطيفة بناتي✨",
       "price": 299,
       "id": "1771902845567",
-      "mediaUrl": "https://img.sanishtech.com/u/2c449beb9982342f9e1fe97778e75360.jpg"
+      "mediaUrl": "https://i.postimg.cc/Kc3HxJCy/IMG-20260224-051245-773.jpg"
     },
     {
       "mediaType": "image",
