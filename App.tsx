@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { StoreData, Product, StoreSettings } from './types';
 import { INITIAL_DATA } from './constants';
@@ -12,16 +13,16 @@ const App: React.FC = () => {
 
   const [view, setView] = useState<'store' | 'admin'>('store');
 
-  // --- إعدادات GitHub API ---
+  // --- إعدادات GitHub API مع نظام التشخيص الذاتي ---
   const REPO_OWNER = "youssefmd2244-droid";
   const REPO_NAME = "7iconcodestore"; 
   const FILE_PATH = "constants.tsx";
   
-  // --- نظام التحديث اللحظي التلقائي (بدون ريفريش) ---
+  // --- نظام التحديث الخارق (Real-time Sync) ---
   useEffect(() => {
     const fetchInstantData = async () => {
       try {
-        // نستخدم التوقيت لكسر الكاش تماماً وجلب أحدث ملف من GitHub
+        // نستخدم الـ API مع توقيت بالملي ثانية لضمان جلب بيانات جديدة كل ثانية
         const response = await fetch(
           `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?t=${Date.now()}`
         );
@@ -34,10 +35,11 @@ const App: React.FC = () => {
           if (jsonMatch && jsonMatch[1]) {
             const latestData = JSON.parse(jsonMatch[1]);
             
-            // مقارنة البيانات: إذا حدث تغيير فعلي، نحدث الواجهة فوراً
+            // المقارنة الذكية: لا تقم بتحديث الحالة إلا إذا تغيرت البيانات فعلياً
+            // هذا يمنع "الرمشة" في الصفحة ويجعل الظهور انسيابي وسريع جداً
             setData(prevData => {
               if (JSON.stringify(prevData) !== JSON.stringify(latestData)) {
-                console.log("تم اكتشاف تحديث جديد.. جاري التحديث اللحظي");
+                console.log("🚀 تم اكتشاف تحديث جديد! جاري العرض...");
                 return latestData;
               }
               return prevData;
@@ -46,14 +48,15 @@ const App: React.FC = () => {
           }
         }
       } catch (err) {
-        console.log("جاري فحص التحديثات...");
+        console.log("فحص التحديثات الصامت يعمل...");
       }
     };
 
     fetchInstantData();
     
-    // السر هنا: فحص كل 5 ثوانٍ لضمان ظهور التعديل فوراً للناس بدون ريفريش
-    const interval = setInterval(fetchInstantData, 5000);
+    // السر هنا: رفعنا السرعة ليفحص كل 1000 ملي ثانية (ثانية واحدة فقط)
+    // بمجرد أن يكتمل الـ Push على GitHub ستظهر عند كل الناس فوراً بدون ريفريش
+    const interval = setInterval(fetchInstantData, 1000); 
     return () => clearInterval(interval);
   }, [REPO_OWNER, REPO_NAME, FILE_PATH]);
 
@@ -62,7 +65,7 @@ const App: React.FC = () => {
 
     try {
       if (!GITHUB_TOKEN) {
-        throw new Error("العيب: التوكن غير مقروء.\nالحل: تأكد من إضافة 'VITE_GITHUB_TOKEN' في إعدادات Vercel.");
+        throw new Error("العيب: التوكن غير مقروء.\nالحل: تأكد من إضافة 'VITE_GITHUB_TOKEN' في إعدادات Vercel بشكل سليم.");
       }
 
       const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
@@ -70,11 +73,18 @@ const App: React.FC = () => {
       });
       
       if (!res.ok) {
-        throw new Error("فشل الاتصال بـ GitHub لجلب الـ SHA");
+        const errorData = await res.json();
+        if (res.status === 401) {
+          throw new Error("العيب: التوكن 'محروق' (Bad credentials).\nالحل: اصنع توكن جديد بصلاحية repo وضعه في Vercel ولا تنشره في الشات.");
+        } else if (res.status === 404) {
+          throw new Error("العيب: ملف الإعدادات غير موجود أو المستودع خاص.\nالحل: تأكد من اسم المستودع ومسار الملف.");
+        }
+        throw new Error(`عيب تقني: ${errorData.message}`);
       }
       
       const fileInfo = await res.json();
 
+      // المحتوى الجديد مع الاحتفاظ بكلمة السر 20042007
       const newContent = `import { StoreData } from './types';\n\nexport const ADMIN_PASSWORD = "20042007";\nexport const WHATSAPP_NUM_1 = "201094555299";\nexport const WHATSAPP_NUM_2 = "201102293350";\n\nexport const INITIAL_DATA: StoreData = ${JSON.stringify(updatedData, null, 2)};`;
 
       const updateRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
@@ -84,20 +94,21 @@ const App: React.FC = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: "تحديث لحظي فوري",
+          message: "تحديث لحظي فائق السرعة",
           content: btoa(unescape(encodeURIComponent(newContent))),
           sha: fileInfo.sha,
         }),
       });
 
       if (updateRes.ok) {
-        alert("✅ تم الحفظ بنجاح! التعديلات ستظهر عند الجميع خلال ثوانٍ معدودة بدون ريفريش.");
+        // رسالة نجاح معدلة لتناسب السرعة الجديدة
+        alert("✅ تم الحفظ! التحديث سيظهر عند جميع المستخدمين الآن خلال ثانية واحدة.");
       } else {
         const errorUpdate = await updateRes.json();
-        throw new Error(`⚠️ فشل التحديث: ${errorUpdate.message}`);
+        throw new Error(`⚠️ فشل التحديث أونلاين: ${errorUpdate.message}`);
       }
     } catch (err: any) {
-      alert(`🛑 تقرير الأعطال:\n\n${err.message}`);
+      alert(`🛑 تقرير نظام الأعطال:\n\n${err.message}`);
     }
   };
 
@@ -148,4 +159,4 @@ const App: React.FC = () => {
 };
 
 export default App;
-        
+            
