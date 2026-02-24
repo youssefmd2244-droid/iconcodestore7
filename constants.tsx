@@ -63,6 +63,14 @@ export const INITIAL_DATA: StoreData = {
       "title": "جلاكسي بروچيكتو",
       "price": 1499,
       "id": "1771905913866"
+    },
+    {
+      "mediaType": "image",
+      "category": "ادوات منزلية ",
+      "title": "حامل الغسالة متحرك💯",
+      "price": 199,
+      "mediaUrl": "https://img.sanishtech.com/u/98a9cc87ccbc448fa0c7e9ebaf18a542.jpg",
+      "id": "1771906812167"
     }
   ],
   "settings": {
