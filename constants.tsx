@@ -59,11 +59,10 @@ export const INITIAL_DATA: StoreData = {
     {
       "mediaType": "image",
       "category": "ديكورات للمنزل",
-      "title": "جلاكسي بروچكتور💫",
-      "price": 1499,
-      "description": "",
       "mediaUrl": "https://img.sanishtech.com/u/8e75a36211bc84e6a89df192e58975e2.jpg",
-      "id": "1771905713502"
+      "title": "جلاكسي بروچيكتو",
+      "price": 1499,
+      "id": "1771905913866"
     }
   ],
   "settings": {
