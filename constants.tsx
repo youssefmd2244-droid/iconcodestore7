@@ -9,6 +9,10 @@ export const INITIAL_DATA: StoreData = {
     {
       "name": "هدايا إسلاميه",
       "icon": "🏷️"
+    },
+    {
+      "name": "ادوات منزلية ",
+      "icon": "🏷️"
     }
   ],
   "products": [
