@@ -27,7 +27,8 @@ export const INITIAL_DATA: StoreData = {
       "description": "خامة ممتازة 👌\nالتلبيس من أول 4سنوات إلى 12,سنة\nسعر القطعة200😍",
       "title": "إسدال قطيفة بناتي✨",
       "price": 299,
-      "id": "1771902845567"
+      "id": "1771902845567",
+      "mediaUrl": "https://img.sanishtech.com/u/2c449beb9982342f9e1fe97778e75360.jpg"
     }
   ],
   "settings": {
