@@ -244,4 +244,3 @@ const StoreFront: React.FC<Props> = ({ data, goToAdmin }) => {
 };
 
 export default StoreFront;
-            
