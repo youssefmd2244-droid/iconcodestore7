@@ -13,6 +13,10 @@ export const INITIAL_DATA: StoreData = {
     {
       "name": "ادوات منزلية ",
       "icon": "🏷️"
+    },
+    {
+      "name": "ديكورات للمنزل",
+      "icon": "🏷️"
     }
   ],
   "products": [
