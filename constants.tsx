@@ -15,11 +15,11 @@ export const INITIAL_DATA: StoreData = {
     {
       "mediaType": "image",
       "category": "Hgg",
-      "title": "Hhhs",
-      "price": 200,
-      "description": "Eddj",
+      "title": "هدية العمرة🕋",
+      "price": 219,
+      "description": "مصحف قطيفة وسبحة\nورق أبيض ⬅️حجم المصحف 14X20\nسعر الباكتج 120ج",
       "id": "1771827388570",
-      "mediaUrl": "https://img.sanishtech.com/u/c2954018cbbbefea03dfa01f75d64aac.jpg"
+      "mediaUrl": "https://img.sanishtech.com/u/bd1262f7a6535ff0161c071a4e8bf164.jpg"
     }
   ],
   "settings": {
