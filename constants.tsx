@@ -53,7 +53,7 @@ export const INITIAL_DATA: StoreData = {
       "description": "",
       "title": "دولاب تخزين اطفال ",
       "price": 1549,
-      "mediaUrl": "https://ibb.co/DftqDZts",
+      "mediaUrl": "https://i.postimg.cc/FKw1bk79/IMG-20260224-054614-863.jpg",
       "id": "1771904971987"
     },
     {
