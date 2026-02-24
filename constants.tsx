@@ -14,7 +14,7 @@ export const INITIAL_DATA: StoreData = {
   "products": [
     {
       "mediaType": "image",
-      "category": "Hgg",
+      "category": "هدايا إسلاميه",
       "title": "هدية العمرة🕋",
       "price": 219,
       "description": "مصحف قطيفة وسبحة\nورق أبيض ⬅️حجم المصحف 14X20\nسعر الباكتج 120ج",
