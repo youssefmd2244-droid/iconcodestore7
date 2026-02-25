@@ -27,7 +27,7 @@ export const INITIAL_DATA: StoreData = {
       "price": 219,
       "description": "مصحف قطيفة وسبحة\nورق أبيض ⬅️حجم المصحف 14X20\nسعر الباكتج 120ج",
       "id": "1771827388570",
-      "mediaUrl": "https://i.postimg.cc/v8tcHgDb/IMG-20260224-050150-602.jpg"
+      "mediaUrl": "https://img.sanishtech.com/u/bd1262f7a6535ff0161c071a4e8bf164.jpg"
     },
     {
       "mediaType": "image",
@@ -69,7 +69,7 @@ export const INITIAL_DATA: StoreData = {
       "category": "ادوات منزلية ",
       "title": "حامل الغسالة متحرك💯",
       "price": 199,
-      "mediaUrl": "https://img.sanishtech.com/u/98a9cc87ccbc448fa0c7e9ebaf18a542.jpg",
+      "mediaUrl": "https://i.postimg.cc/0Qd2QFkc/IMG-20260224-061834-975.jpg",
       "id": "1771906812167"
     }
   ],
