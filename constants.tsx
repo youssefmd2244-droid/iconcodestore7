@@ -27,7 +27,7 @@ export const INITIAL_DATA: StoreData = {
       "price": 219,
       "description": "مصحف قطيفة وسبحة\nورق أبيض ⬅️حجم المصحف 14X20\nسعر الباكتج 120ج",
       "id": "1771827388570",
-      "mediaUrl": "https://img.sanishtech.com/u/bd1262f7a6535ff0161c071a4e8bf164.jpg"
+      "mediaUrl": "https://i.postimg.cc/v8tcHgDb/IMG-20260224-050150-602.jpg"
     },
     {
       "mediaType": "image",
@@ -44,7 +44,7 @@ export const INITIAL_DATA: StoreData = {
       "title": "شماعه",
       "price": 69,
       "description": "القطعتين بسعر قطعة 🔥🔥🔥",
-      "mediaUrl": "https://i.postimg.cc/c1fBFjVx/IMG-20260224-051912-999.jpg",
+      "mediaUrl": "https://img.sanishtech.com/u/8c7b4b29b99b6873289c13beb9f03737.jpg",
       "id": "1771903548368"
     },
     {
