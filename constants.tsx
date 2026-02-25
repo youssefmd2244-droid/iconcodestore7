@@ -44,7 +44,7 @@ export const INITIAL_DATA: StoreData = {
       "title": "شماعه",
       "price": 69,
       "description": "القطعتين بسعر قطعة 🔥🔥🔥",
-      "mediaUrl": "https://img.sanishtech.com/u/8c7b4b29b99b6873289c13beb9f03737.jpg",
+      "mediaUrl": "https://i.postimg.cc/c1fBFjVx/IMG-20260224-051912-999.jpg",
       "id": "1771903548368"
     },
     {
