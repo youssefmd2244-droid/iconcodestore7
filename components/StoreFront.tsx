@@ -12,13 +12,13 @@ const StoreFront: React.FC<Props> = ({ data, goToAdmin }) => {
   const [lightbox, setLightbox] = useState<Product | null>(null);
   const revealRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // --- دالة المعالج الذكي للصور لضمان الظهور للجميع ---
+  // --- دالة المعالج الذكي للصور لضمان الظهور للجميع ومنع التكرار ---
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, originalUrl: string) => {
     const target = e.target as HTMLImageElement;
-    // إذا فشل الرابط، نقوم بمحاولة إعادة تحميله مع إضافة كاسر للكاش لضمان جلب أحدث نسخة
-    if (!target.src.includes('retry')) {
-      console.log("⚠️ فشل تحميل الصورة، جاري إعادة المحاولة بنظام Turbo...");
-      target.src = originalUrl + (originalUrl.includes('?') ? '&' : '?') + 'retry=' + Date.now();
+    // إذا فشل الرابط، نضيف باراميتر "v=1" لإجبار المتصفح على تجاوز الكاش وجلب الصورة فوراً
+    if (!target.src.includes('v=1')) {
+      console.log("⚠️ محاولة جلب الصورة بنظام التحميل المباشر...");
+      target.src = originalUrl + (originalUrl.includes('?') ? '&' : '?') + 'v=1';
     }
   };
 
@@ -117,6 +117,7 @@ const StoreFront: React.FC<Props> = ({ data, goToAdmin }) => {
                 {p.mediaType === 'image' ? (
                   <img 
                     src={p.mediaUrl} 
+                    key={p.mediaUrl} // المفتاح يضمن تحديث الصورة فور تغيير الرابط
                     className="w-full h-full object-cover group-hover:scale-110 transition-all duration-1000" 
                     onError={(e) => handleImageError(e, p.mediaUrl)}
                     loading="lazy"
